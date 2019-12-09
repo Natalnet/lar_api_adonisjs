@@ -15,7 +15,10 @@ class UserSchema extends Schema {
         .string('email', 254)
         .notNullable()
         .unique();
+      table.string('token');
+      table.timestamp('token_created_at');
       table.string('password', 60).notNullable();
+      // table.uuid('id').primary();
       table.timestamps();
     });
   }
