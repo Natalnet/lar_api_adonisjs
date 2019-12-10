@@ -3,9 +3,14 @@
 const Route = use('Route');
 
 Route.post('users', 'UserController.store').validator('User');
-Route.post('sessions', 'SessionController.store');
+Route.post('sessions', 'SessionController.store').validator('Session');
 
-Route.post('passwords', 'ForgotPasswordController.store');
+Route.post('passwords', 'ForgotPasswordController.store').validator(
+  'RequestNewPassword'
+);
+Route.put('passwords', 'ForgotPasswordController.update').validator(
+  'ForgotPassword'
+);
 
 Route.group(() => {
   Route.get('member/:id', 'MemberController.show');

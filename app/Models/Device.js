@@ -4,7 +4,11 @@
 const Model = use('Model');
 
 class Device extends Model {
-  users() {
+  owner() {
+    return this.belongsTo('App/Models/User');
+  }
+
+  members() {
     return this.belongsToMany('App/Models/User').pivotModel(
       'App/Models/UserDevice'
     );

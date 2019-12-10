@@ -16,7 +16,8 @@ class DeviceController {
   async index({ auth }) {
     const devices = await auth.user
       .devices()
-      .with('users')
+      .with('owner')
+      .with('members', builder => builder.select('id', 'email', 'username'))
       .fetch();
     return devices;
   }
@@ -59,7 +60,8 @@ class DeviceController {
     const device = await auth.user
       .devices()
       .where('devices.id', params.id)
-      .with('users')
+      .with('members')
+      .with('owner')
       .first();
 
     return device;

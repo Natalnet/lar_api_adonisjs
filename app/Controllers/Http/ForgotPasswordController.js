@@ -38,7 +38,7 @@ class ForgotPasswordController {
     }
   }
 
-  async update({ request, response }) {
+  async update({ request, response, auth }) {
     try {
       const { token, password } = request.all();
 
@@ -59,6 +59,10 @@ class ForgotPasswordController {
       user.password = password;
 
       await user.save();
+
+      const tokenLogin = await auth.attempt(user.email, password);
+
+      return tokenLogin;
     } catch (err) {
       return response.status(err.status).send({
         error: { message: 'Algo não deu certo ao resetar sua senha' }

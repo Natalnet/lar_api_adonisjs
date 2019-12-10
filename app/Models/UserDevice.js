@@ -19,8 +19,8 @@ class UserDevice extends Model {
     return this.belongsToMany('Adonis/Acl/Permission');
   }
 
-  user() {
-    return this.belongsTo('App/Models/User');
+  users() {
+    return this.belongsToMany('App/Models/User');
   }
 
   device() {

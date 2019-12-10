@@ -16,6 +16,10 @@ class User extends Model {
     });
   }
 
+  static get hidden() {
+    return ['password', 'token', 'token_created_at'];
+  }
+
   devicesJoins() {
     return this.hasMany('App/Models/UserDevice');
   }
@@ -28,6 +32,13 @@ class User extends Model {
     return this.belongsToMany('App/Models/Device').pivotModel(
       'App/Models/UserDevice'
     );
+  }
+
+  static get traits() {
+    return [
+      '@provider:Adonis/Acl/HasRole',
+      '@provider:Adonis/Acl/HasPermission'
+    ];
   }
 }
 

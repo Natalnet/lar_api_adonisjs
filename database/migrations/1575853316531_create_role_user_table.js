@@ -4,7 +4,7 @@ const Schema = use('Schema');
 
 class RoleUserTableSchema extends Schema {
   up() {
-    this.create('role_user', table => {
+    this.create('role_user_device', table => {
       table.increments();
       table
         .integer('role_id')
@@ -29,7 +29,7 @@ class RoleUserTableSchema extends Schema {
   }
 
   down() {
-    this.drop('role_user');
+    this.drop('role_user_device');
   }
 }
 

@@ -24,7 +24,8 @@ class MemberController {
   async show({ params }) {
     const members = await UserDevice.query()
       .where('device_id', params.id)
-      .with('user')
+      .with('roles')
+      .with('permissions')
       .fetch();
 
     return members;

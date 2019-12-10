@@ -4,7 +4,7 @@ const Schema = use('Schema');
 
 class PermissionUserTableSchema extends Schema {
   up() {
-    this.create('permission_user', table => {
+    this.create('permission_user_device', table => {
       table.increments();
       table
         .integer('permission_id')
@@ -29,7 +29,7 @@ class PermissionUserTableSchema extends Schema {
   }
 
   down() {
-    this.drop('permission_user');
+    this.drop('permission_user_device');
   }
 }
 
