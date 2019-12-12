@@ -10,8 +10,11 @@
 |
 */
 
+/** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const User = use('App/Models/User');
+/** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const Role = use('Adonis/Acl/Role');
+/** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const Permission = use('Adonis/Acl/Permission');
 
 class DatabaseSeeder {
@@ -28,14 +31,14 @@ class DatabaseSeeder {
       password: '123456'
     });
 
-    const allPermission = await Permission.create({
-      slug: 'all_permissions',
-      name: 'Todas as permissoes'
-    });
-
     const addMember = await Permission.create({
       slug: 'add_member',
       name: 'Adicionar membros'
+    });
+
+    const editMember = await Permission.create({
+      slug: 'edit_member',
+      name: 'Editar membros'
     });
 
     const removeMember = await Permission.create({
@@ -53,8 +56,13 @@ class DatabaseSeeder {
       name: 'Deletar dispositivos'
     });
 
+    const editDevice = await Permission.create({
+      slug: 'device_edit',
+      name: 'Editar dispositivo'
+    });
+
     const adminSystem = await Role.create({
-      slug: 'adminstrator',
+      slug: 'admin',
       name: 'Adminstrador Sistema'
     });
 
@@ -76,27 +84,31 @@ class DatabaseSeeder {
     await adminSystem
       .permissions()
       .attach([
-        allPermission.id,
+        editMember.id,
         addMember.id,
         removeMember.id,
         createDevice.id,
-        deleteDevice.id
+        deleteDevice.id,
+        editDevice.id
       ]);
 
     await adminDevice
       .permissions()
       .attach([
+        editMember.id,
         addMember.id,
         removeMember.id,
         createDevice.id,
-        deleteDevice.id
+        deleteDevice.id,
+        editDevice.id
       ]);
 
     await user.permissions().attach([createDevice.id, deleteDevice.id]);
+    await user1.roles().attach([adminSystem.id]);
+    await user2.roles().attach([user.id]);
 
     const device1 = await user1.devices().create({
-      user_id: user1.id,
-      name: 'Dispositivo test',
+      name: 'Dispositivo teste',
       description: 'Um dispositivo de teste',
       topicToRead: 'a',
       topicToWrite: 'b',
@@ -105,7 +117,6 @@ class DatabaseSeeder {
     });
 
     const device2 = await user2.devices().create({
-      user_id: user2.id,
       name: 'Dispositivo teste 2',
       description: 'Um dispositivo de teste 2',
       topicToRead: 'c',
@@ -114,18 +125,26 @@ class DatabaseSeeder {
       status: 'Offline'
     });
 
+    await user1.devices().attach(device2.id);
+
     const deviceJoin1 = await user1
-      .devicesJoins()
+      .deviceJoins()
       .where('device_id', device1.id)
       .first();
 
     const deviceJoin2 = await user2
-      .devicesJoins()
+      .deviceJoins()
+      .where('device_id', device2.id)
+      .first();
+
+    const deviceJoin3 = await user1
+      .deviceJoins()
       .where('device_id', device2.id)
       .first();
 
     await deviceJoin1.roles().attach([adminDevice.id]);
     await deviceJoin2.roles().attach([adminDevice.id]);
+    await deviceJoin3.roles().attach([user.id]);
   }
 }
 

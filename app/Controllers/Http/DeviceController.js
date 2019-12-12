@@ -1,5 +1,8 @@
 'use strict';
 
+/** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
+const Role = use('Adonis/Acl/Role');
+
 /**
  * Resourceful controller for interacting with devices
  */
@@ -14,11 +17,7 @@ class DeviceController {
    * @param {View} ctx.view
    */
   async index({ auth }) {
-    const devices = await auth.user
-      .devices()
-      .with('owner')
-      .with('members', builder => builder.select('id', 'email', 'username'))
-      .fetch();
+    const devices = await auth.user.devices().fetch();
     return devices;
   }
 
@@ -40,9 +39,16 @@ class DeviceController {
       'status'
     ]);
 
-    const device = await auth.user
-      .devices()
-      .create({ ...data, user_id: auth.user.id });
+    const device = await auth.user.devices().create(data);
+
+    const deviceJoin = await auth.user
+      .deviceJoins()
+      .where('device_id', device.id)
+      .first();
+
+    const adminDevice = await Role.findBy('slug', 'adminDevice');
+
+    await deviceJoin.roles().attach([adminDevice.id]);
 
     return device;
   }
@@ -56,13 +62,11 @@ class DeviceController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show({ params, auth }) {
+  async show({ auth, params }) {
     const device = await auth.user
       .devices()
-      .where('devices.id', params.id)
-      .with('members')
-      .with('owner')
-      .first();
+      .where('device_id', params.id)
+      .fetch();
 
     return device;
   }
@@ -75,13 +79,10 @@ class DeviceController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update({ params, request, auth }) {
+  async update({ request }) {
     const data = request.all();
 
-    const device = await auth.user
-      .devices()
-      .where('devices.id', params.id)
-      .first();
+    const device = await request.device;
 
     device.merge(data);
 
@@ -98,13 +99,8 @@ class DeviceController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({ params, auth }) {
-    const device = await auth.user
-      .devices()
-      .where('devices.id', params.id)
-      .first();
-
-    await device.delete();
+  async destroy({ request }) {
+    await request.device.delete();
   }
 }
 

@@ -39,7 +39,10 @@ const namedMiddleware = {
   auth: 'Adonis/Middleware/Auth',
   guest: 'Adonis/Middleware/AllowGuestOnly',
   is: 'Adonis/Acl/Is',
-  can: 'Adonis/Acl/Can'
+  can: 'Adonis/Acl/Can',
+  device: 'App/Middleware/Device',
+  isDevice: 'App/Middleware/AclIsDevice',
+  canDevice: 'App/Middleware/AclCanDevice'
 };
 
 /*

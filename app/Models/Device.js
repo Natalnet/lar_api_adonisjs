@@ -4,14 +4,16 @@
 const Model = use('Model');
 
 class Device extends Model {
-  owner() {
-    return this.belongsTo('App/Models/User');
-  }
+  static boot() {
+    super.boot();
 
-  members() {
-    return this.belongsToMany('App/Models/User').pivotModel(
-      'App/Models/UserDevice'
-    );
+    this.addTrait('@provider:Lucid/Slugify', {
+      fields: {
+        slug: 'name'
+      },
+      strategy: 'dbIncrement',
+      disableUpdates: false
+    });
   }
 }
 
