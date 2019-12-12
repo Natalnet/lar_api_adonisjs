@@ -4,7 +4,7 @@ const Schema = use('Schema');
 
 class PermissionUserTableSchema extends Schema {
   up() {
-    this.create('permission_user', table => {
+    this.create('device_user_permission', table => {
       table.increments();
       table
         .integer('permission_id')
@@ -16,20 +16,20 @@ class PermissionUserTableSchema extends Schema {
         .on('permissions')
         .onDelete('cascade');
       table
-        .integer('user_id')
+        .integer('device_user_id')
         .unsigned()
         .index();
       table
-        .foreign('user_id')
+        .foreign('device_user_id')
         .references('id')
-        .on('users')
+        .on('device_users')
         .onDelete('cascade');
       table.timestamps();
     });
   }
 
   down() {
-    this.drop('permission_user');
+    this.drop('device_user_permission');
   }
 }
 

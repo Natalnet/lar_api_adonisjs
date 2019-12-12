@@ -7,18 +7,11 @@ class DeviceSchema extends Schema {
   up() {
     this.create('devices', table => {
       table.increments();
+      table.text('name').notNullable();
       table
-        .string('name')
+        .string('slug')
         .notNullable()
         .unique();
-      table
-        .integer('user_id')
-        .unsigned()
-        .notNullable()
-        .references('id')
-        .inTable('users')
-        .onUpdate('CASCADE')
-        .onDelete('CASCADE');
       table
         .string('topicToWrite')
         .notNullable()
@@ -33,7 +26,6 @@ class DeviceSchema extends Schema {
         .boolean('enabled')
         .notNullable()
         .defaultTo(false);
-      // table.uuid('id').primary();
       table.timestamps();
     });
   }

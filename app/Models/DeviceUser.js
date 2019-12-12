@@ -3,7 +3,7 @@
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const Model = use('Model');
 
-class UserDevice extends Model {
+class DeviceUser extends Model {
   static get traits() {
     return [
       '@provider:Adonis/Acl/HasRole',
@@ -22,10 +22,6 @@ class UserDevice extends Model {
   user() {
     return this.belongsTo('App/Models/User');
   }
-
-  device() {
-    return this.belongsTo('App/Models/Device');
-  }
 }
 
-module.exports = UserDevice;
+module.exports = DeviceUser;

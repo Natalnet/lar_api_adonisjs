@@ -8,17 +8,23 @@ class UserSchema extends Schema {
     this.create('users', table => {
       table.increments();
       table
-        .string('username', 80)
+        .string('username')
         .notNullable()
         .unique();
       table
-        .string('email', 254)
+        .string('email')
         .notNullable()
         .unique();
+      table
+        .integer('avatar_id')
+        .unsigned()
+        .references('id')
+        .inTable('files')
+        .onDelete('SET NULL')
+        .onUpdate('CASCADE');
       table.string('token');
       table.timestamp('token_created_at');
-      table.string('password', 60).notNullable();
-      // table.uuid('id').primary();
+      table.string('password').notNullable();
       table.timestamps();
     });
   }

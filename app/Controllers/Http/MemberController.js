@@ -1,33 +1,73 @@
 'use strict';
 
+const ForbiddenException = require('adonis-acl/src/Exceptions/ForbiddenException');
+
+/** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const User = use('App/Models/User');
-const UserDevice = use('App/Models/UserDevice');
+/** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
+const DeviceUser = use('App/Models/DeviceUser');
+/** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
+const Role = use('Adonis/Acl/Role');
 
 class MemberController {
-  // Adicionar membro em um dispositivo
-  // /device/:id/addmember
-  // body: {user_id: 1}
-  async store({ params, request, response }) {
-    try {
-      const email = request.input('email');
-      const user = await User.findByOrFail('email', email);
+  async store({ request, auth }) {
+    const email = request.input('email');
 
-      await user.devices().attach(params.id);
-      return user;
-    } catch (error) {
-      return response.status(error.status).send({
-        error: { message: 'Algo não deu certo, esse usuário existe?' }
-      });
-    }
+    const user = await User.findByOrFail('email', email);
+
+    await user.devices().attach(auth.user.currentDevice);
+    const devicejoin = await user
+      .deviceJoins()
+      .where('device_id', auth.user.currentDevice)
+      .first();
+
+    const userRole = await Role.findBy('slug', 'user');
+
+    await devicejoin.roles().attach(userRole.id);
+
+    return user;
   }
 
-  async show({ params }) {
-    const members = await UserDevice.query()
-      .where('device_id', params.id)
-      .with('user')
+  async update({ request, params, auth }) {
+    const roles = request.input('roles');
+
+    const admin = await Role.findBy('slug', 'admin');
+    const containAdminRole = roles.find(role => role === admin.id);
+
+    if (containAdminRole) {
+      throw new ForbiddenException();
+    }
+
+    const user = await User.find(params.id);
+
+    const devicejoin = await user
+      .deviceJoins()
+      .where('device_id', auth.user.currentDevice)
+      .first();
+
+    await devicejoin.roles().sync(roles);
+  }
+
+  async show({ request }) {
+    console.log('a');
+    const members = await DeviceUser.query()
+      .where('device_id', request.device.id)
+      .with('user', builder =>
+        builder.select(['id', 'username', 'email', 'avatar_id'])
+      )
+      .with('roles', builder => builder.select(['id', 'slug']))
       .fetch();
 
     return members;
+  }
+
+  async delete({ params, auth }) {
+    const user = await User.find(params.id);
+
+    await user
+      .deviceJoins()
+      .where('device_id', auth.user.currentDevice)
+      .delete();
   }
 }
 

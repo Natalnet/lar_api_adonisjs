@@ -4,7 +4,7 @@ const Schema = use('Schema');
 
 class RoleUserTableSchema extends Schema {
   up() {
-    this.create('role_user', table => {
+    this.create('device_user_role', table => {
       table.increments();
       table
         .integer('role_id')
@@ -16,20 +16,20 @@ class RoleUserTableSchema extends Schema {
         .on('roles')
         .onDelete('cascade');
       table
-        .integer('user_id')
+        .integer('device_user_id')
         .unsigned()
         .index();
       table
-        .foreign('user_id')
+        .foreign('device_user_id')
         .references('id')
-        .on('users')
+        .on('device_users')
         .onDelete('cascade');
       table.timestamps();
     });
   }
 
   down() {
-    this.drop('role_user');
+    this.drop('device_user_role');
   }
 }
 
