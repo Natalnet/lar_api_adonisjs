@@ -40,3 +40,9 @@ Route.group(() => {
 
   Route.get('permissions', 'PermissionController.index');
 }).middleware('auth', 'device');
+
+Route.group(() => {
+  Route.resource('users', 'UserController')
+    .apiOnly()
+    .except(['store']);
+}).middleware('auth', 'is:admin');

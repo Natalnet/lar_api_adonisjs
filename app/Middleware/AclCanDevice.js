@@ -3,15 +3,13 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
-const ForbiddenException = require('adonis-acl/src/Exceptions/ForbiddenException');
-
 class AclCanDevice {
   /**
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Function} next
    */
-  async handle({ auth, request }, next, ...args) {
+  async handle({ auth, request, response }, next, ...args) {
     let expression = args[0];
     if (Array.isArray(expression)) {
       expression = expression[0];
@@ -25,7 +23,9 @@ class AclCanDevice {
     const can = await device.can(expression);
 
     if (!can) {
-      throw new ForbiddenException();
+      return response.status(403).send({
+        error: { message: 'Você não tem permissão para acessar esta rota!' }
+      });
     }
 
     await next();

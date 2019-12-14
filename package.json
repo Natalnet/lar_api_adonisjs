@@ -12,7 +12,7 @@
     "adonisjs",
     "adonis-app"
   ],
-  "author": "",
+  "author": "Victor Hermes",
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
