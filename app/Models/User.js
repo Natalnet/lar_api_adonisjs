@@ -22,7 +22,13 @@ class User extends Model {
   }
 
   static get hidden() {
-    return ['password'];
+    return [
+      'password',
+      'token',
+      'token_created_at',
+      'updated_at',
+      'created_at'
+    ];
   }
 
   /**

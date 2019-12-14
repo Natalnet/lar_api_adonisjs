@@ -19,7 +19,9 @@ class UserController {
    * @param {View} ctx.view
    */
   async index({ request, response, view }) {
-    const users = await User.all();
+    const users = await User.query()
+      .with('roles', builder => builder.select('id', 'slug', 'name'))
+      .fetch();
 
     return users;
   }
