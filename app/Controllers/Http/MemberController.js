@@ -1,7 +1,5 @@
 'use strict';
 
-const ForbiddenException = require('adonis-acl/src/Exceptions/ForbiddenException');
-
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const User = use('App/Models/User');
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
@@ -28,14 +26,16 @@ class MemberController {
     return user;
   }
 
-  async update({ request, params, auth }) {
+  async update({ request, response, params, auth }) {
     const roles = request.input('roles');
 
     const admin = await Role.findBy('slug', 'admin');
     const containAdminRole = roles.find(role => role === admin.id);
 
     if (containAdminRole) {
-      throw new ForbiddenException();
+      return response.status(403).send({
+        error: { message: 'Você não tem permissão para acessar esta rota!' }
+      });
     }
 
     const user = await User.find(params.id);
@@ -49,7 +49,6 @@ class MemberController {
   }
 
   async show({ request }) {
-    console.log('a');
     const members = await DeviceUser.query()
       .where('device_id', request.device.id)
       .with('user', builder =>
