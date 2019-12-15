@@ -8,6 +8,18 @@ const DeviceUser = use('App/Models/DeviceUser');
 const Role = use('Adonis/Acl/Role');
 
 class MemberController {
+  async index({ request }) {
+    const members = await DeviceUser.query()
+      .where('device_id', request.device.id)
+      .with('user', builder =>
+        builder.select(['id', 'username', 'email', 'avatar_id'])
+      )
+      .with('roles', builder => builder.select(['id', 'slug']))
+      .fetch();
+
+    return members;
+  }
+
   async store({ request, auth }) {
     const email = request.input('email');
 
@@ -45,19 +57,13 @@ class MemberController {
       .where('device_id', auth.user.currentDevice)
       .first();
 
+    if (!devicejoin) {
+      return response.status(404).send({
+        error: { message: 'O usuário não é membro desse dispositivo!' }
+      });
+    }
+
     await devicejoin.roles().sync(roles);
-  }
-
-  async show({ request }) {
-    const members = await DeviceUser.query()
-      .where('device_id', request.device.id)
-      .with('user', builder =>
-        builder.select(['id', 'username', 'email', 'avatar_id'])
-      )
-      .with('roles', builder => builder.select(['id', 'slug']))
-      .fetch();
-
-    return members;
   }
 
   async delete({ params, auth }) {

@@ -4,11 +4,15 @@
 const Schema = use('Schema');
 
 class TokensSchema extends Schema {
-  up() {
+  async up() {
+    await this.db.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
     this.create('tokens', table => {
-      table.increments();
       table
-        .integer('user_id')
+        .uuid('id')
+        .primary()
+        .defaultTo(this.db.raw('uuid_generate_v4()'));
+      table
+        .uuid('user_id')
         .unsigned()
         .references('id')
         .inTable('users');

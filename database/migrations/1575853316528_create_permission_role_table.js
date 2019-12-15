@@ -5,9 +5,12 @@ const Schema = use('Schema');
 class PermissionRoleTableSchema extends Schema {
   up() {
     this.create('permission_role', table => {
-      table.increments();
       table
-        .integer('permission_id')
+        .uuid('id')
+        .primary()
+        .defaultTo(this.db.raw('uuid_generate_v4()'));
+      table
+        .uuid('permission_id')
         .unsigned()
         .index();
       table
@@ -16,7 +19,7 @@ class PermissionRoleTableSchema extends Schema {
         .on('permissions')
         .onDelete('cascade');
       table
-        .integer('role_id')
+        .uuid('role_id')
         .unsigned()
         .index();
       table

@@ -5,7 +5,10 @@ const Schema = use('Schema');
 class PermissionsTableSchema extends Schema {
   up() {
     this.create('permissions', table => {
-      table.increments();
+      table
+        .uuid('id')
+        .primary()
+        .defaultTo(this.db.raw('uuid_generate_v4()'));
       table
         .string('slug')
         .notNullable()

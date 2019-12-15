@@ -4,9 +4,13 @@
 const Schema = use('Schema');
 
 class DeviceSchema extends Schema {
-  up() {
+  async up() {
+    await this.db.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
     this.create('devices', table => {
-      table.increments();
+      table
+        .uuid('id')
+        .primary()
+        .defaultTo(this.db.raw('uuid_generate_v4()'));
       table.text('name').notNullable();
       table
         .string('slug')

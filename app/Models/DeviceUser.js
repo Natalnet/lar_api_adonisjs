@@ -22,6 +22,10 @@ class DeviceUser extends Model {
   user() {
     return this.belongsTo('App/Models/User');
   }
+
+  device() {
+    return this.belongsTo('App/Models/Device');
+  }
 }
 
 module.exports = DeviceUser;
