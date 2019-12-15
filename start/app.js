@@ -21,7 +21,8 @@ const providers = [
   '@adonisjs/validator/providers/ValidatorProvider',
   '@adonisjs/antl/providers/AntlProvider',
   'adonis-acl/providers/AclProvider',
-  '@adonisjs/lucid-slugify/providers/SlugifyProvider'
+  '@adonisjs/lucid-slugify/providers/SlugifyProvider',
+  '@adonisjs/vow/providers/VowProvider'
 ];
 
 /*
