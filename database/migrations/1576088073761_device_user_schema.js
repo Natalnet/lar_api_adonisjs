@@ -6,14 +6,17 @@ const Schema = use('Schema');
 class DeviceUserSchema extends Schema {
   up() {
     this.create('device_users', table => {
-      table.increments();
       table
-        .integer('user_id')
+        .uuid('id')
+        .primary()
+        .defaultTo(this.db.raw('uuid_generate_v4()'));
+      table
+        .uuid('user_id')
         .references('id')
         .on('users')
         .onDelete('cascade');
       table
-        .integer('device_id')
+        .uuid('device_id')
         .references('id')
         .on('devices')
         .onDelete('cascade');

@@ -16,21 +16,23 @@ Route.put('passwords', 'ForgotPasswordController.update').validator(
 Route.group(() => {
   Route.get('devices', 'DeviceController.index');
   Route.get('devices/:id', 'DeviceController.show');
-  Route.post('devices', 'DeviceController.store').middleware(
-    'can:device_create'
-  );
+  Route.post('devices', 'DeviceController.store')
+    .validator('Device')
+    .middleware('can:device_create');
 }).middleware('auth');
 
 Route.group(() => {
-  Route.post('members', 'MemberController.store');
-  Route.get('members', 'MemberController.show');
-  Route.put('members/:id', 'MemberController.update').middleware(
-    'isDevice:adminDevice'
-  );
+  Route.get('members', 'MemberController.index');
+  Route.post('members', 'MemberController.store').validator('Member');
+  Route.put('members/:id', 'MemberController.update')
+    .validator('MemberUpdate')
+    .middleware('isDevice:adminDevice');
   Route.delete('members/:id', 'MemberController.delete').middleware(
     'canDevice:remove_member'
   );
+}).middleware('auth', 'device');
 
+Route.group(() => {
   Route.put('devices', 'DeviceController.update').middleware(
     'canDevice:device_edit'
   );

@@ -7,19 +7,26 @@
 
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const User = use('App/Models/User');
-
+/** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
+const Role = use('Role');
 class UserController {
   /**
    * Show a list of all users.
    * GET users
-   *
    * @param {object} ctx
    * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
    */
-  async index({ request, response, view }) {
-    const users = await User.all();
+  async index({ request }) {
+    const { page, limit } = request.headers(['page', 'limit']);
+
+    const users = await User.query()
+      .with('roles', builder => builder.select('id', 'slug', 'name'))
+      .with('deviceJoins', builder => {
+        builder.with('roles', builder => builder.select('id', 'slug', 'name'));
+        builder.with('device');
+      })
+      .with('permissions')
+      .paginate(page || 1, limit || 6);
 
     return users;
   }
@@ -36,6 +43,8 @@ class UserController {
     const data = request.only(['username', 'email']);
 
     const user = await User.create(data);
+    const visitor = await Role.findBy('slug', 'visitor');
+    await user.roles().attach(visitor.id);
 
     const token = await auth.generate(user);
 

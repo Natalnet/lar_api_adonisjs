@@ -46,6 +46,11 @@ class DatabaseSeeder {
       name: 'Remover membros'
     });
 
+    const readDevice = await Permission.create({
+      slug: 'device_read',
+      name: 'Ler dispositivos'
+    });
+
     const createDevice = await Permission.create({
       slug: 'device_create',
       name: 'Criar dispositivos'
@@ -61,13 +66,13 @@ class DatabaseSeeder {
       name: 'Editar dispositivo'
     });
 
-    const adminSystem = await Role.create({
+    const admin = await Role.create({
       slug: 'admin',
       name: 'Adminstrador Sistema'
     });
 
     const adminDevice = await Role.create({
-      slug: 'adminDevice',
+      slug: 'admin_device',
       name: 'Adminstrador Dispositivo'
     });
 
@@ -81,7 +86,7 @@ class DatabaseSeeder {
       name: 'Visitante'
     });
 
-    await adminSystem
+    await admin
       .permissions()
       .attach([
         editMember.id,
@@ -103,8 +108,9 @@ class DatabaseSeeder {
         editDevice.id
       ]);
 
-    await user.permissions().attach([createDevice.id, deleteDevice.id]);
-    await user1.roles().attach([adminSystem.id]);
+    await user.permissions().attach([readDevice.id]);
+
+    await user1.roles().attach([admin.id]);
     await user2.roles().attach([user.id]);
 
     const device1 = await user1.devices().create({

@@ -5,7 +5,10 @@ const Schema = use('Schema');
 class RolesTableSchema extends Schema {
   up() {
     this.create('roles', table => {
-      table.increments();
+      table
+        .uuid('id')
+        .primary()
+        .defaultTo(this.db.raw('uuid_generate_v4()'));
       table
         .string('slug')
         .notNullable()

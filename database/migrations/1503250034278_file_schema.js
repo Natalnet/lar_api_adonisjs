@@ -4,9 +4,13 @@
 const Schema = use('Schema');
 
 class FileSchema extends Schema {
-  up() {
+  async up() {
+    await this.db.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
     this.create('files', table => {
-      table.increments();
+      table
+        .uuid('id')
+        .primary()
+        .defaultTo(this.db.raw('uuid_generate_v4()'));
       table.string('name').notNullable();
       table.string('path').notNullable();
       table.timestamps();
