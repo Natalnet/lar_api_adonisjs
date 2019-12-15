@@ -10,7 +10,7 @@ jobs:
       # documented at https://circleci.com/docs/2.0/circleci-images/
       # - image: circleci/mongo:3.4.4
 
-      - image: keinos/sqlite3:latest
+      - image: circleci/postgres:latest
 
     working_directory: ~/app
 
