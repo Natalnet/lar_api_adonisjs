@@ -28,6 +28,7 @@
     "@adonisjs/lucid-slugify": "^1.0.3",
     "@adonisjs/mail": "^3.0.10",
     "@adonisjs/validator": "^5.0.6",
+    "@adonisjs/vow": "^1.0.17",
     "@sentry/node": "5.10.1",
     "adonis-acl": "^1.1.1",
     "date-fns": "^2.8.1",
@@ -43,7 +44,8 @@
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1"
+    "eslint-plugin-standard": "^4.0.1",
+    "sqlite3": "^4.1.1"
   },
   "autoload": {
     "App": "./app"
