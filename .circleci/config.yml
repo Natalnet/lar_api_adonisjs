@@ -10,10 +10,7 @@ jobs:
       # documented at https://circleci.com/docs/2.0/circleci-images/
       # - image: circleci/mongo:3.4.4
 
-      - image: circleci/postgres:9.6.2-alpine
-        environment:
-          POSTGRES_USER: victor
-          POSTGRES_DB: adonis_api_test
+      - image: keinos/sqlite3:latest
 
     working_directory: ~/app
 
@@ -27,8 +24,8 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      - run: sudo npm install -g @adonisjs/cli
-      - run: npm install
+      - run: sudo yarn global add @adonisjs/cli
+      - run: yarn install
 
       - save_cache:
           paths:
@@ -39,7 +36,7 @@ jobs:
       - run:
           name: run tests
           command: |
-            ENV_SILENT=true adonis test
+            adonis test
 workflows:
   version: 2
   build-and-deploy-on-hold:
