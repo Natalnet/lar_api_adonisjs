@@ -1,31 +1,31 @@
-'use strict';
+'use strict'
 
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
-const Model = use('Model');
+const Model = use('Model')
 
 class DeviceUser extends Model {
-  static get traits() {
+  static get traits () {
     return [
       '@provider:Adonis/Acl/HasRole',
       '@provider:Adonis/Acl/HasPermission'
-    ];
+    ]
   }
 
-  roles() {
-    return this.belongsToMany('Adonis/Acl/Role');
+  roles () {
+    return this.belongsToMany('Adonis/Acl/Role')
   }
 
-  permission() {
-    return this.belongsToMany('Adonis/Acl/Permission');
+  permission () {
+    return this.belongsToMany('Adonis/Acl/Permission')
   }
 
-  user() {
-    return this.belongsTo('App/Models/User');
+  user () {
+    return this.belongsTo('App/Models/User')
   }
 
-  device() {
-    return this.belongsTo('App/Models/Device');
+  device () {
+    return this.belongsTo('App/Models/Device')
   }
 }
 
-module.exports = DeviceUser;
+module.exports = DeviceUser

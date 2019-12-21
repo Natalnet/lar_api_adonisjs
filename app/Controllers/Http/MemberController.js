@@ -1,11 +1,11 @@
-'use strict';
+'use strict'
 
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
-const User = use('App/Models/User');
+const User = use('App/Models/User')
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
-const DeviceUser = use('App/Models/DeviceUser');
+const DeviceUser = use('App/Models/DeviceUser')
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
-const Role = use('Adonis/Acl/Role');
+const Role = use('Adonis/Acl/Role')
 
 class MemberController {
   async index({ request }) {
@@ -15,65 +15,65 @@ class MemberController {
         builder.select(['id', 'username', 'email', 'avatar_id'])
       )
       .with('roles', builder => builder.select(['id', 'slug']))
-      .fetch();
+      .fetch()
 
-    return members;
+    return members
   }
 
   async store({ request, auth }) {
-    const email = request.input('email');
+    const email = request.input('email')
 
-    const user = await User.findByOrFail('email', email);
+    const user = await User.findByOrFail('email', email)
 
-    await user.devices().attach(auth.user.currentDevice);
+    await user.devices().attach(auth.user.currentDevice)
     const devicejoin = await user
       .deviceJoins()
       .where('device_id', auth.user.currentDevice)
-      .first();
+      .first()
 
-    const userRole = await Role.findBy('slug', 'user');
+    const userRole = await Role.findBy('slug', 'user')
 
-    await devicejoin.roles().attach(userRole.id);
+    await devicejoin.roles().attach(userRole.id)
 
-    return user;
+    return user
   }
 
   async update({ request, response, params, auth }) {
-    const roles = request.input('roles');
+    const roles = request.input('roles')
 
-    const admin = await Role.findBy('slug', 'admin');
-    const containAdminRole = roles.find(role => role === admin.id);
+    const admin = await Role.findBy('slug', 'admin')
+    const containAdminRole = roles.find(role => role === admin.id)
 
     if (containAdminRole) {
       return response.status(403).send({
-        error: { message: 'Você não tem permissão para acessar esta rota!' }
-      });
+        error: { message: 'Você não tem permissão para acessar esta rota!' },
+      })
     }
 
-    const user = await User.find(params.id);
+    const user = await User.find(params.id)
 
     const devicejoin = await user
       .deviceJoins()
       .where('device_id', auth.user.currentDevice)
-      .first();
+      .first()
 
     if (!devicejoin) {
       return response.status(404).send({
-        error: { message: 'O usuário não é membro desse dispositivo!' }
-      });
+        error: { message: 'O usuário não é membro desse dispositivo!' },
+      })
     }
 
-    await devicejoin.roles().sync(roles);
+    await devicejoin.roles().sync(roles)
   }
 
   async delete({ params, auth }) {
-    const user = await User.find(params.id);
+    const user = await User.find(params.id)
 
     await user
       .deviceJoins()
       .where('device_id', auth.user.currentDevice)
-      .delete();
+      .delete()
   }
 }
 
-module.exports = MemberController;
+module.exports = MemberController

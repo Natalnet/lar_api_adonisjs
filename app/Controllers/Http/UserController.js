@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
@@ -6,9 +6,9 @@
 /** @typedef {import('@adonisjs/auth/src/Schemes/Jwt')} AuthJwt */
 
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
-const User = use('App/Models/User');
+const User = use('App/Models/User')
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
-const Role = use('Role');
+const Role = use('Role')
 class UserController {
   /**
    * Show a list of all users.
@@ -16,19 +16,19 @@ class UserController {
    * @param {object} ctx
    * @param {Request} ctx.request
    */
-  async index({ request }) {
-    const { page, limit } = request.headers(['page', 'limit']);
+  async index ({ request }) {
+    const { page, limit } = request.headers(['page', 'limit'])
 
     const users = await User.query()
       .with('roles', builder => builder.select('id', 'slug', 'name'))
       .with('deviceJoins', builder => {
-        builder.with('roles', builder => builder.select('id', 'slug', 'name'));
-        builder.with('device');
+        builder.with('roles', builder => builder.select('id', 'slug', 'name'))
+        builder.with('device')
       })
       .with('permissions')
-      .paginate(page || 1, limit || 6);
+      .paginate(page || 1, limit || 6)
 
-    return users;
+    return users
   }
 
   /**
@@ -39,16 +39,16 @@ class UserController {
    * @param {AuthJwt} ctx.auth
    * @param {Request} ctx.request
    */
-  async store({ auth, request, response }) {
-    const data = request.only(['username', 'email']);
+  async store ({ auth, request, response }) {
+    const data = request.only(['username', 'email'])
 
-    const user = await User.create(data);
-    const visitor = await Role.findBy('slug', 'visitor');
-    await user.roles().attach(visitor.id);
+    const user = await User.create(data)
+    const visitor = await Role.findBy('slug', 'visitor')
+    await user.roles().attach(visitor.id)
 
-    const token = await auth.generate(user);
+    const token = await auth.generate(user)
 
-    return response.json({ user, token });
+    return response.json({ user, token })
   }
 
   /**
@@ -60,17 +60,17 @@ class UserController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show({ params, response }) {
+  async show ({ params, response }) {
     try {
-      const user = await User.findOrFail(params.id);
+      const user = await User.findOrFail(params.id)
 
-      await user.loadMany(['roles', 'permissions']);
+      await user.loadMany(['roles', 'permissions'])
 
-      return user;
+      return user
     } catch (err) {
       return response.status(err.status).send({
         error: { message: 'Usuário não encontrado!' }
-      });
+      })
     }
   }
 
@@ -82,7 +82,7 @@ class UserController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update({ params, request, response }) {
+  async update ({ params, request, response }) {
     try {
       const { permissions, roles, ...data } = request.only([
         'username',
@@ -90,29 +90,29 @@ class UserController {
         'password',
         'permissions',
         'roles'
-      ]);
+      ])
 
-      const user = await User.findOrFail(params.id);
+      const user = await User.findOrFail(params.id)
 
-      user.merge(data);
+      user.merge(data)
 
-      await user.save();
+      await user.save()
 
       if (roles) {
-        await user.roles().sync(roles);
+        await user.roles().sync(roles)
       }
 
       if (permissions) {
-        await user.permissions().sync(permissions);
+        await user.permissions().sync(permissions)
       }
 
-      await user.loadMany(['roles', 'permissions']);
+      await user.loadMany(['roles', 'permissions'])
 
-      return user;
+      return user
     } catch (err) {
       return response.status(err.status).send({
         error: { message: 'Usuário não encontrado!' }
-      });
+      })
     }
   }
 
@@ -124,17 +124,17 @@ class UserController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({ params, response }) {
+  async destroy ({ params, response }) {
     try {
-      const user = await User.findOrFail(params.id);
+      const user = await User.findOrFail(params.id)
 
-      await user.delete();
+      await user.delete()
     } catch (err) {
       return response.status(err.status).send({
         error: { message: 'Usuário não encontrado!' }
-      });
+      })
     }
   }
 }
 
-module.exports = UserController;
+module.exports = UserController
