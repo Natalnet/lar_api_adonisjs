@@ -8,9 +8,9 @@ const DeviceUser = use('App/Models/DeviceUser')
 const Role = use('Adonis/Acl/Role')
 
 class MemberController {
-  async index({ request }) {
+  async index({ auth }) {
     const members = await DeviceUser.query()
-      .where('device_id', request.device.id)
+      .where('device_id', auth.user.currentDevice)
       .with('user', builder =>
         builder.select(['id', 'username', 'email', 'avatar_id'])
       )
@@ -20,22 +20,34 @@ class MemberController {
     return members
   }
 
-  async store({ request, auth }) {
+  async store({ response, request, auth }) {
     const email = request.input('email')
+    try {
+      const user = await User.findByOrFail('email', email)
 
-    const user = await User.findByOrFail('email', email)
+      const devicejoin = await user
+        .deviceJoins()
+        .where('device_id', auth.user.currentDevice)
+        .first()
 
-    await user.devices().attach(auth.user.currentDevice)
-    const devicejoin = await user
-      .deviceJoins()
-      .where('device_id', auth.user.currentDevice)
-      .first()
+      if (devicejoin) {
+        return response.status(400).send({
+          error: { message: 'O usuário já é membro desse dispositivo!' }
+        })
+      }
 
-    const userRole = await Role.findBy('slug', 'user')
+      await user.devices().attach(auth.user.currentDevice)
 
-    await devicejoin.roles().attach(userRole.id)
+      const userRole = await Role.findBy('slug', 'user')
 
-    return user
+      await devicejoin.roles().attach(userRole.id)
+
+      return user
+    } catch (err) {
+      return response.status(err.status).send({
+        error: { message: 'Usuário não encontrado!' }
+      })
+    }
   }
 
   async update({ request, response, params, auth }) {
@@ -46,7 +58,7 @@ class MemberController {
 
     if (containAdminRole) {
       return response.status(403).send({
-        error: { message: 'Você não tem permissão para acessar esta rota!' },
+        error: { message: 'Você não tem permissão para acessar esta rota!' }
       })
     }
 
@@ -59,7 +71,7 @@ class MemberController {
 
     if (!devicejoin) {
       return response.status(404).send({
-        error: { message: 'O usuário não é membro desse dispositivo!' },
+        error: { message: 'O usuário não é membro desse dispositivo!' }
       })
     }
 

@@ -1,16 +1,18 @@
 module.exports = {
   env: {
     es6: true,
-    node: true,
+    node: true
   },
-  extends: ['standard'],
+  extends: ['standard', 'prettier', 'prettier/standard'],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
-    use: true,
+    use: true
   },
   parserOptions: {
-    ecmaVersion: 2018,
+    ecmaVersion: 2018
   },
-  rules: {},
+  rules: {
+    'space-before-function-paren': 'off'
+  }
 }

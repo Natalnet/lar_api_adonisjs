@@ -1,18 +1,13 @@
 'use strict'
 
-const User = use('App/Models/User')
-
 class SessionController {
-  async store ({ request, response, auth }) {
+  async store({ request, response, auth }) {
     const { email, password } = request.all()
 
     try {
-      if (await auth.attempt(email, password)) {
-        const user = await User.findBy('email', email)
-        const token = await auth.generate(user)
+      const token = await auth.attempt(email, password)
 
-        return response.json({ user, token })
-      }
+      return response.json(token)
     } catch (err) {
       return response.status(err.status).send({
         error: { message: 'Email ou senha incorreta' }
