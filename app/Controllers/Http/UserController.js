@@ -16,7 +16,7 @@ class UserController {
    * @param {object} ctx
    * @param {Request} ctx.request
    */
-  async index ({ request }) {
+  async index({ request }) {
     const { page, limit } = request.headers(['page', 'limit'])
 
     const users = await User.query()
@@ -39,8 +39,8 @@ class UserController {
    * @param {AuthJwt} ctx.auth
    * @param {Request} ctx.request
    */
-  async store ({ auth, request, response }) {
-    const data = request.only(['username', 'email'])
+  async store({ auth, request, response }) {
+    const data = request.only(['username', 'email', 'password'])
 
     const user = await User.create(data)
     const visitor = await Role.findBy('slug', 'visitor')
@@ -48,7 +48,7 @@ class UserController {
 
     const token = await auth.generate(user)
 
-    return response.json({ user, token })
+    return response.json(token)
   }
 
   /**
@@ -60,7 +60,7 @@ class UserController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, response }) {
+  async show({ params, response }) {
     try {
       const user = await User.findOrFail(params.id)
 
@@ -82,7 +82,7 @@ class UserController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update({ params, request, response }) {
     try {
       const { permissions, roles, ...data } = request.only([
         'username',
@@ -124,7 +124,7 @@ class UserController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, response }) {
+  async destroy({ params, response }) {
     try {
       const user = await User.findOrFail(params.id)
 
