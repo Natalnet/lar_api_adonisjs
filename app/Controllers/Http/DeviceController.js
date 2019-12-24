@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
-const Role = use('Adonis/Acl/Role');
+const Role = use('Adonis/Acl/Role')
 
 /**
  * Resourceful controller for interacting with devices
@@ -16,9 +16,9 @@ class DeviceController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index({ auth }) {
-    const devices = await auth.user.devices().fetch();
-    return devices;
+  async index ({ auth }) {
+    const devices = await auth.user.devices().fetch()
+    return devices
   }
 
   /**
@@ -29,7 +29,7 @@ class DeviceController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store({ request, auth }) {
+  async store ({ request, auth }) {
     const data = request.only([
       'name',
       'description',
@@ -37,20 +37,20 @@ class DeviceController {
       'topicToWrite',
       'enabled',
       'status'
-    ]);
+    ])
 
-    const device = await auth.user.devices().create(data);
+    const device = await auth.user.devices().create(data)
 
     const deviceJoin = await auth.user
       .deviceJoins()
       .where('device_id', device.id)
-      .first();
+      .first()
 
-    const adminDevice = await Role.findBy('slug', 'adminDevice');
+    const adminDevice = await Role.findBy('slug', 'adminDevice')
 
-    await deviceJoin.roles().attach([adminDevice.id]);
+    await deviceJoin.roles().attach([adminDevice.id])
 
-    return device;
+    return device
   }
 
   /**
@@ -62,13 +62,13 @@ class DeviceController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show({ auth, params }) {
+  async show ({ auth, params }) {
     const device = await auth.user
       .devices()
       .where('device_id', params.id)
-      .fetch();
+      .fetch()
 
-    return device;
+    return device
   }
 
   /**
@@ -79,16 +79,16 @@ class DeviceController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update({ request }) {
-    const data = request.all();
+  async update ({ request }) {
+    const data = request.all()
 
-    const device = await request.device;
+    const device = await request.device
 
-    device.merge(data);
+    device.merge(data)
 
-    await device.save();
+    await device.save()
 
-    return device;
+    return device
   }
 
   /**
@@ -99,9 +99,9 @@ class DeviceController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({ request }) {
-    await request.device.delete();
+  async destroy ({ request }) {
+    await request.device.delete()
   }
 }
 
-module.exports = DeviceController;
+module.exports = DeviceController

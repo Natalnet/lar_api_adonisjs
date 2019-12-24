@@ -1,21 +1,21 @@
-'use strict';
+'use strict'
 
-const Antl = use('Antl');
+const Antl = use('Antl')
 
 class MemberUpdate {
-  get validateAll() {
-    return true;
+  get validateAll () {
+    return true
   }
 
-  get rules() {
+  get rules () {
     return {
       roles: 'required|array'
-    };
+    }
   }
 
-  get messages() {
-    return Antl.list('validation');
+  get messages () {
+    return Antl.list('validation')
   }
 }
 
-module.exports = MemberUpdate;
+module.exports = MemberUpdate

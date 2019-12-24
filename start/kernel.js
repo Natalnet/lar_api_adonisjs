@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
 /** @type {import('@adonisjs/framework/src/Server')} */
-const Server = use('Server');
+const Server = use('Server')
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +16,7 @@ const globalMiddleware = [
   'Adonis/Middleware/BodyParser',
   'App/Middleware/ConvertEmptyStringsToNull',
   'Adonis/Acl/Init'
-];
+]
 
 /*
 |--------------------------------------------------------------------------
@@ -43,7 +43,7 @@ const namedMiddleware = {
   device: 'App/Middleware/Device',
   isDevice: 'App/Middleware/AclIsDevice',
   canDevice: 'App/Middleware/AclCanDevice'
-};
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -58,8 +58,8 @@ const namedMiddleware = {
 const serverMiddleware = [
   // 'Adonis/Middleware/Static',
   'Adonis/Middleware/Cors'
-];
+]
 
 Server.registerGlobal(globalMiddleware)
   .registerNamed(namedMiddleware)
-  .use(serverMiddleware);
+  .use(serverMiddleware)

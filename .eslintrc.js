@@ -1,28 +1,18 @@
 module.exports = {
+  env: {
+    es6: true,
+    node: true
+  },
   extends: ['standard', 'prettier', 'prettier/standard'],
-  parser: 'babel-eslint',
   globals: {
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly',
     use: true
   },
   parserOptions: {
-    ecmaVersion: 2018,
-    ecmaFeatures: {
-      impliedStrict: true,
-      classes: true
-    }
+    ecmaVersion: 2018
   },
-  env: {
-    node: true
-  },
-  plugins: ['prettier'],
   rules: {
-    'prettier/prettier': [
-      'error',
-      {
-        trailingComma: 'none',
-        singleQuote: true,
-        printWidth: 80
-      }
-    ]
+    'space-before-function-paren': 'off'
   }
-};
+}
