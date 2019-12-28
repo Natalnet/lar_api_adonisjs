@@ -14,6 +14,7 @@ Route.put('passwords', 'ForgotPasswordController.update').validator(
 )
 
 Route.group(() => {
+  Route.get('account', 'AccountController.index')
   Route.get('devices', 'DeviceController.index')
   Route.get('devices/:id', 'DeviceController.show')
   Route.post('devices', 'DeviceController.store')

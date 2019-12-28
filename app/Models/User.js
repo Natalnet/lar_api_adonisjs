@@ -9,17 +9,18 @@ const Hash = use('Hash')
 const uuid = require('uuid/v4')
 
 class User extends Model {
-  static get hidden () {
+  static get hidden() {
     return [
       'password',
       'token',
       'token_created_at',
       'updated_at',
-      'created_at'
+      'created_at',
+      'pivot'
     ]
   }
 
-  static boot () {
+  static boot() {
     const user = {
       id: uuid.v4()
     }
@@ -55,21 +56,21 @@ class User extends Model {
    *
    * @return {Object}
    */
-  tokens () {
+  tokens() {
     return this.hasMany('App/Models/Token')
   }
 
-  deviceJoins () {
+  deviceJoins() {
     return this.hasMany('App/Models/DeviceUser')
   }
 
-  devices () {
+  devices() {
     return this.belongsToMany('App/Models/Device').pivotModel(
       'App/Models/DeviceUser'
     )
   }
 
-  static get traits () {
+  static get traits() {
     return [
       '@provider:Adonis/Acl/HasRole',
       '@provider:Adonis/Acl/HasPermission'
