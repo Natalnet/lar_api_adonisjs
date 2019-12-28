@@ -9,7 +9,7 @@ class AccountController {
       const user = await User.query()
         .where('id', auth.user.id)
         .with('permissions', builder => builder.select('slug'))
-        .fetch()
+        .first()
 
       return user
     } catch (err) {
