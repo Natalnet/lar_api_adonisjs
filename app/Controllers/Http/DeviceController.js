@@ -16,9 +16,14 @@ class DeviceController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ auth }) {
+  async index({ auth }) {
     const devices = await auth.user.devices().fetch()
-    return devices
+
+    const devicesJSON = devices.toJSON()
+
+    devicesJSON.map(device => delete device.pivot)
+
+    return devicesJSON
   }
 
   /**
@@ -29,7 +34,7 @@ class DeviceController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, auth }) {
+  async store({ response, request, auth }) {
     const data = request.only([
       'name',
       'description',
@@ -38,19 +43,26 @@ class DeviceController {
       'enabled',
       'status'
     ])
+    try {
+      const device = await auth.user.devices().create(data)
 
-    const device = await auth.user.devices().create(data)
+      const deviceJoin = await auth.user
+        .deviceJoins()
+        .where('device_id', device.id)
+        .first()
 
-    const deviceJoin = await auth.user
-      .deviceJoins()
-      .where('device_id', device.id)
-      .first()
+      const adminDevice = await Role.findBy('slug', 'admin_device')
 
-    const adminDevice = await Role.findBy('slug', 'adminDevice')
+      await deviceJoin.roles().attach([adminDevice.id])
 
-    await deviceJoin.roles().attach([adminDevice.id])
+      await device.load('user')
 
-    return device
+      return device
+    } catch (err) {
+      return response.status(400).send({
+        error: { message: 'Já existe um dispositivo com esse nome!' }
+      })
+    }
   }
 
   /**
@@ -62,13 +74,25 @@ class DeviceController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ auth, params }) {
-    const device = await auth.user
-      .devices()
-      .where('device_id', params.id)
-      .fetch()
+  async show({ response, auth, params }) {
+    try {
+      const device = await auth.user
+        .devices()
+        .where('device_id', params.id)
+        .first()
 
-    return device
+      if (!device) {
+        return response.status(404).send({
+          error: { message: 'Dispositivo não encontrado!' }
+        })
+      }
+
+      return device
+    } catch (err) {
+      return response.status(404).send({
+        error: { message: 'Dispositivo não encontrado!' }
+      })
+    }
   }
 
   /**
@@ -79,7 +103,7 @@ class DeviceController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ request }) {
+  async update({ request }) {
     const data = request.all()
 
     const device = await request.device
@@ -99,7 +123,7 @@ class DeviceController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ request }) {
+  async destroy({ request }) {
     await request.device.delete()
   }
 }

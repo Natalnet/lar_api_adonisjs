@@ -27,7 +27,7 @@ Route.group(() => {
   Route.post('members', 'MemberController.store').validator('Member')
   Route.put('members/:id', 'MemberController.update')
     .validator('MemberUpdate')
-    .middleware('isDevice:adminDevice')
+    .middleware('isDevice:admin_device || is:admin')
   Route.delete('members/:id', 'MemberController.delete').middleware(
     'canDevice:remove_member'
   )
@@ -35,10 +35,10 @@ Route.group(() => {
 
 Route.group(() => {
   Route.put('devices', 'DeviceController.update').middleware(
-    'canDevice:device_edit'
+    'canDevice:device_edit || is:admin'
   )
   Route.delete('devices', 'DeviceController.destroy').middleware(
-    'canDevice:device_delete'
+    'canDevice:device_delete || is:admin'
   )
 
   Route.get('permissions', 'PermissionController.index')

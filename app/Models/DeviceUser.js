@@ -4,26 +4,26 @@
 const Model = use('Model')
 
 class DeviceUser extends Model {
-  static get traits () {
+  static get traits() {
     return [
       '@provider:Adonis/Acl/HasRole',
       '@provider:Adonis/Acl/HasPermission'
     ]
   }
 
-  roles () {
+  roles() {
     return this.belongsToMany('Adonis/Acl/Role')
   }
 
-  permission () {
+  permission() {
     return this.belongsToMany('Adonis/Acl/Permission')
   }
 
-  user () {
+  user() {
     return this.belongsTo('App/Models/User')
   }
 
-  device () {
+  device() {
     return this.belongsTo('App/Models/Device')
   }
 }

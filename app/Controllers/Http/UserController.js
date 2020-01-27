@@ -64,11 +64,25 @@ class UserController {
     try {
       const user = await User.findOrFail(params.id)
 
-      await user.loadMany(['roles', 'permissions'])
+      await user.loadMany(['roles', 'permissions', 'devices'])
 
-      return user
+      const userJSON = user.toJSON()
+
+      userJSON.roles = userJSON.roles.map(role => {
+        return { id: role.id, slug: role.slug, name: role.name }
+      })
+
+      userJSON.permissions = userJSON.permissions.map(permission => {
+        return {
+          id: permission.id,
+          slug: permission.slug,
+          name: permission.name
+        }
+      })
+
+      return userJSON
     } catch (err) {
-      return response.status(err.status).send({
+      return response.status(err.status || 404).send({
         error: { message: 'Usuário não encontrado!' }
       })
     }
@@ -93,7 +107,6 @@ class UserController {
       ])
 
       const user = await User.findOrFail(params.id)
-
       user.merge(data)
 
       await user.save()
@@ -110,7 +123,7 @@ class UserController {
 
       return user
     } catch (err) {
-      return response.status(err.status).send({
+      return response.status(err.status || 404).send({
         error: { message: 'Usuário não encontrado!' }
       })
     }
@@ -130,7 +143,7 @@ class UserController {
 
       await user.delete()
     } catch (err) {
-      return response.status(err.status).send({
+      return response.status(err.status || 404).send({
         error: { message: 'Usuário não encontrado!' }
       })
     }

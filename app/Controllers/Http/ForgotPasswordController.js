@@ -21,19 +21,21 @@ class ForgotPasswordController {
         ['emails.forgot_password'],
         {
           email,
-          token: user.token,
+          username: user.username,
           link: `${request.input('redirect_url')}?token=${user.token}`
         },
         message => {
           message
             .to(user.email)
-            .from('noreply@lariot.com.br', 'Victor | Lar-Iot')
+            .from('noreply@lariot.com.br', 'LAR - IOT')
             .subject('Recuperação de senha')
         }
       )
     } catch (err) {
       return response.status(err.status).send({
-        error: { message: 'Algo não deu certo, esse e-mail existe?' }
+        error: {
+          message: 'Algo não deu certo, esse e-mail existe?'
+        }
       })
     }
   }
