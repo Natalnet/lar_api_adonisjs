@@ -8,10 +8,18 @@ class AccountController {
     try {
       const user = await User.query()
         .where('id', auth.user.id)
-        .with('permissions', builder => builder.select('slug'))
+        .with('permissions')
+        .with('roles')
         .first()
 
-      return user
+      const userJSON = user.toJSON()
+
+      userJSON.roles = userJSON.roles.map(role => role.slug)
+      userJSON.permissions = userJSON.permissions.map(
+        permission => permission.slug
+      )
+
+      return userJSON
     } catch (err) {
       return response.status(500).send({
         error: { message: 'Sessão expirada, error: ' + err }

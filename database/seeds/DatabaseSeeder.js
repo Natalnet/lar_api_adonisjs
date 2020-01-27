@@ -18,7 +18,7 @@ const Role = use('Adonis/Acl/Role')
 const Permission = use('Adonis/Acl/Permission')
 
 class DatabaseSeeder {
-  async run () {
+  async run() {
     const user1 = await User.create({
       username: 'Victor Hermes',
       email: 'victor@gmail.com',
@@ -79,6 +79,11 @@ class DatabaseSeeder {
     const user = await Role.create({
       slug: 'user',
       name: 'Usuario'
+    })
+
+    const userDevice = await Role.create({
+      slug: 'user_device',
+      name: 'Usuario do dispositivo'
     })
 
     await Role.create({
@@ -150,7 +155,7 @@ class DatabaseSeeder {
 
     await deviceJoin1.roles().attach([adminDevice.id])
     await deviceJoin2.roles().attach([adminDevice.id])
-    await deviceJoin3.roles().attach([user.id])
+    await deviceJoin3.roles().attach([userDevice.id])
   }
 }
 

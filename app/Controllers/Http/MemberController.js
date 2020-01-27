@@ -25,12 +25,12 @@ class MemberController {
     try {
       const user = await User.findByOrFail('email', email)
 
-      const devicejoin = await user
+      const isMember = await user
         .deviceJoins()
         .where('device_id', auth.user.currentDevice)
         .first()
 
-      if (devicejoin) {
+      if (isMember) {
         return response.status(400).send({
           error: { message: 'O usuário já é membro desse dispositivo!' }
         })
@@ -38,13 +38,18 @@ class MemberController {
 
       await user.devices().attach(auth.user.currentDevice)
 
-      const userRole = await Role.findBy('slug', 'user')
+      const userDeviceRole = await Role.findBy('slug', 'user_device')
 
-      await devicejoin.roles().attach(userRole.id)
+      const deviceJoin = await user
+        .deviceJoins()
+        .where('device_id', auth.user.currentDevice)
+        .first()
+
+      await deviceJoin.roles().attach(userDeviceRole.id)
 
       return user
     } catch (err) {
-      return response.status(err.status).send({
+      return response.status(err.status || 404).send({
         error: { message: 'Usuário não encontrado!' }
       })
     }
@@ -58,11 +63,17 @@ class MemberController {
 
     if (containAdminRole) {
       return response.status(403).send({
-        error: { message: 'Você não tem permissão para acessar esta rota!' }
+        error: { message: 'Você não tem permissão para fazer isso!' }
       })
     }
 
     const user = await User.find(params.id)
+
+    if (!user) {
+      return response.status(404).send({
+        error: { message: 'Usuário não encontrado!' }
+      })
+    }
 
     const devicejoin = await user
       .deviceJoins()
@@ -78,8 +89,14 @@ class MemberController {
     await devicejoin.roles().sync(roles)
   }
 
-  async delete({ params, auth }) {
+  async delete({ response, params, auth }) {
     const user = await User.find(params.id)
+
+    if (!user) {
+      return response.status(404).send({
+        error: { message: 'Usuário não encontrado!' }
+      })
+    }
 
     await user
       .deviceJoins()

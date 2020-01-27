@@ -4,7 +4,7 @@
 const Model = use('Model')
 
 class Device extends Model {
-  static boot () {
+  static boot() {
     super.boot()
 
     this.addTrait('@provider:Lucid/Slugify', {
