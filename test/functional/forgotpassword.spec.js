@@ -17,7 +17,7 @@ test('it should send an email with reset password instruction', async ({
   Mail.fake()
 
   const forgotPayload = {
-    email: 'victor@gmail.com'
+    email: 'victorhermes@gmail.com'
   }
 
   await Factory.model('App/Models/User').create(forgotPayload)
