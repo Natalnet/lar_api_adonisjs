@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 const Event = use('Event')
 const Mqtt = use('Mqtt')
 
