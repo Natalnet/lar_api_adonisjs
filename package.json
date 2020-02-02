@@ -42,10 +42,12 @@
     "@adonisjs/mail": "^3.0.10",
     "@adonisjs/validator": "^5.0.6",
     "@adonisjs/vow": "^1.0.17",
+    "@adonisjs/websocket": "^1.0.12",
     "@sentry/node": "5.10.1",
     "adonis-acl": "^1.1.1",
+    "adonis-mqtt": "^0.2.0",
     "date-fns": "^2.8.1",
-    "pg": "^7.14.0",
+    "pg": "^7.18.1",
     "prettier": "^1.19.1"
   },
   "devDependencies": {

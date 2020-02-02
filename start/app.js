@@ -22,7 +22,9 @@ const providers = [
   '@adonisjs/antl/providers/AntlProvider',
   'adonis-acl/providers/AclProvider',
   '@adonisjs/lucid-slugify/providers/SlugifyProvider',
-  '@adonisjs/vow/providers/VowProvider'
+  '@adonisjs/vow/providers/VowProvider',
+  'adonis-mqtt/providers/MqttProvider',
+  '@adonisjs/websocket/providers/WsProvider'
 ]
 
 /*
@@ -36,7 +38,8 @@ const providers = [
 */
 const aceProviders = [
   '@adonisjs/lucid/providers/MigrationsProvider',
-  'adonis-acl/providers/CommandsProvider'
+  'adonis-acl/providers/CommandsProvider',
+  'adonis-mqtt/providers/CommandsProvider'
 ]
 
 /*
