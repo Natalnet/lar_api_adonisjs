@@ -1,5 +1,16 @@
 ## Api para consumo do site LAR IOT
 
+## Instalação do banco de dados 
+
+Istalação dos PostgresSQL usando docker no Ubutu 18.04 
+```
+$ sudo snap install docker
+$ sudo docker run --name database -e POSTGRES_PASSWORD=docker -p 5432:5432 -d postgres:11
+```
+
+
+
+
 ### Colaboradores
 <hr>
 <table>
